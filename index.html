@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Color Button Rows</title>
+    <title>Persistent Color Button Rows</title>
     <style>
         body {
             display: flex;
@@ -52,8 +52,8 @@
             const button = document.createElement('div');
             button.className = 'button';
 
-            // Initialize count from local storage or default it to zero
-            const buttonKey = `${row}-${index}`;
+            // Unique key for each button based on its row and column index
+            const buttonKey = `button-${row}-${index}`;
             const count = Number(localStorage.getItem(buttonKey)) || 0;
             updateButtonColor(button, count);
 
@@ -81,17 +81,29 @@
             }
 
             document.getElementById('buttonContainer').appendChild(buttonRow);
+            saveRowCount(rowCount + 1);
         }
 
         function removeRow() {
             const container = document.getElementById('buttonContainer');
-            if (container.lastChild) {
-                const rowCount = container.childElementCount - 1;
-                // Clean up local storage for the last row
+            const rowCount = container.childElementCount;
+            if (rowCount > 0) {
                 for (let i = 0; i < 5; i++) {
-                    localStorage.removeItem(`${rowCount}-${i}`);
+                    localStorage.removeItem(`button-${rowCount - 1}-${i}`);
                 }
                 container.removeChild(container.lastChild);
+                saveRowCount(rowCount - 1);
+            }
+        }
+
+        function saveRowCount(count) {
+            localStorage.setItem('rowCount', count);
+        }
+
+        function loadRows() {
+            const rowCount = Number(localStorage.getItem('rowCount')) || 0;
+            for (let row = 0; row < rowCount; row++) {
+                addRow();
             }
         }
 
@@ -99,8 +111,8 @@
         document.getElementById('addRow').addEventListener('click', addRow);
         document.getElementById('removeRow').addEventListener('click', removeRow);
 
-        // Optionally adding an initial row on load (remove if not needed)
-        addRow(); // Call this once to start with an initial row
+        // Load existing rows on page load
+        loadRows();
     </script>
 </body>
 </html>
