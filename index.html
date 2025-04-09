@@ -1,57 +1,66 @@
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>Click Counter</title>
-       <style>
-           body {
-               display: flex;
-               justify-content: center;
-               align-items: center;
-               height: 100vh;
-               font-family: Arial, sans-serif;
-               background-color: #f5f5f5;
-           }
-           .counter-container {
-               text-align: center;
-               background: white;
-               padding: 30px;
-               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-               border-radius: 8px;
-           }
-           button {
-               margin-top: 20px;
-               padding: 10px 20px;
-               font-size: 16px;
-           }
-       </style>
-   </head>
-   <body>
-       <div class="counter-container">
-           <h1>Button Clicked: <span id="count">0</span> times</h1>
-           <button id="clickButton">Click Me!</button>
-       </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Counter</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .buttons {
+            display: flex;
+        }
+        .button {
+            width: 1cm;
+            height: 1cm;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="buttons">
+        <div class="button" id="button1">0</div>
+        <div class="button" id="button2">0</div>
+        <div class="button" id="button3">0</div>
+        <div class="button" id="button4">0</div>
+        <div class="button" id="button5">0</div>
+    </div>
 
-       <script>
-           // Retrieve the count from local storage or start from zero
-           let count = localStorage.getItem('clickCount') || 0;
-           
-           // Display the current count
-           document.getElementById('count').innerText = count;
+    <script>
+        // Initialize counts from local storage or default to zero
+        const counts = [0, 0, 0, 0, 0].map((_, i) => Number(localStorage.getItem('buttonCount' + i)) || 0);
 
-           // Get the button element
-           const button = document.getElementById('clickButton');
+        // Function to update button text and store counts
+        function updateButton(button, index) {
+            button.innerText = counts[index];
+            localStorage.setItem('buttonCount' + index, counts[index]);
+        }
+        
+        // Get all button elements
+        const buttons = document.querySelectorAll('.button');
 
-           // Add a click event listener to the button
-           button.addEventListener('click', () => {
-               count++;
-               // Update the count display
-               document.getElementById('count').innerText = count;
-               // Store the updated count in local storage
-               localStorage.setItem('clickCount', count);
-           });
-       </script>
-   </body>
-   </html>
-   
+        // Add event listeners to each button
+        buttons.forEach((button, index) => {
+            updateButton(button, index);
+            
+            button.addEventListener('click', () => {
+                counts[index] = (counts[index] + 1) % 6; // Increment and reset to 0 after reaching 5
+                updateButton(button, index);
+            });
+        });
+    </script>
+</body>
+</html>
