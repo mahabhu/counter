@@ -1,0 +1,57 @@
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Click Counter</title>
+       <style>
+           body {
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               height: 100vh;
+               font-family: Arial, sans-serif;
+               background-color: #f5f5f5;
+           }
+           .counter-container {
+               text-align: center;
+               background: white;
+               padding: 30px;
+               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+               border-radius: 8px;
+           }
+           button {
+               margin-top: 20px;
+               padding: 10px 20px;
+               font-size: 16px;
+           }
+       </style>
+   </head>
+   <body>
+       <div class="counter-container">
+           <h1>Button Clicked: <span id="count">0</span> times</h1>
+           <button id="clickButton">Click Me!</button>
+       </div>
+
+       <script>
+           // Retrieve the count from local storage or start from zero
+           let count = localStorage.getItem('clickCount') || 0;
+           
+           // Display the current count
+           document.getElementById('count').innerText = count;
+
+           // Get the button element
+           const button = document.getElementById('clickButton');
+
+           // Add a click event listener to the button
+           button.addEventListener('click', () => {
+               count++;
+               // Update the count display
+               document.getElementById('count').innerText = count;
+               // Store the updated count in local storage
+               localStorage.setItem('clickCount', count);
+           });
+       </script>
+   </body>
+   </html>
+   
