@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Persistent Color Button Rows</title>
+    <title>Dynamic Color Button Rows</title>
     <style>
         body {
             display: flex;
@@ -13,9 +13,6 @@
             min-height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
-        }
-        .controls {
-            margin-bottom: 10px;
         }
         .buttons {
             display: flex;
@@ -30,20 +27,29 @@
             display: inline-block;
         }
         .control-button {
-            width: auto;
-            padding: 0 10px;
-            background-color: #4285f4;
-            color: white;
-            font-size: 14px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+        }
+        #addRow {
+            background-color: #0f9d58;
+        }
+        #removeRow {
+            background-color: #db4437;
+        }
+        .controls {
+            display: flex;
         }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <button class="control-button" id="addRow">Add Row</button>
-        <button class="control-button" id="removeRow">Remove Row</button>
-    </div>
     <div id="buttonContainer"></div>
+    <div class="controls">
+        <div class="control-button" id="addRow"></div>
+        <div class="control-button" id="removeRow"></div>
+    </div>
 
     <script>
         const colors = ['#ffffff', '#4285f4', '#0f9d58', '#f4b400', '#db4437'];
@@ -52,7 +58,6 @@
             const button = document.createElement('div');
             button.className = 'button';
 
-            // Unique key for each button based on its row and column index
             const buttonKey = `button-${row}-${index}`;
             const count = Number(localStorage.getItem(buttonKey)) || 0;
             updateButtonColor(button, count);
@@ -107,11 +112,9 @@
             }
         }
 
-        // Initialize functional buttons
         document.getElementById('addRow').addEventListener('click', addRow);
         document.getElementById('removeRow').addEventListener('click', removeRow);
 
-        // Load existing rows on page load
         loadRows();
     </script>
 </body>
