@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Color Button Rows</title>
+    <title>Dynamic Color Button Rows with Dates</title>
     <style>
         body {
             display: flex;
@@ -16,6 +16,7 @@
         }
         .buttons {
             display: flex;
+            align-items: center;
             margin-bottom: 5px;
         }
         .button, .control-button {
@@ -42,6 +43,11 @@
         .controls {
             display: flex;
         }
+        .date-label {
+            margin-left: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -53,6 +59,8 @@
 
     <script>
         const colors = ['#ffffff', '#4285f4', '#0f9d58', '#f4b400', '#db4437'];
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
         function createButton(row, index) {
             const button = document.createElement('div');
@@ -75,6 +83,14 @@
             button.style.backgroundColor = colors[count];
         }
 
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = monthNames[date.getMonth()];
+            const year = String(date.getFullYear()).slice(-2);
+            const dayName = dayNames[date.getDay()];
+            return `${day}-${month}-${year}-${dayName}`;
+        }
+
         function addRow() {
             const rowCount = document.getElementById('buttonContainer').childElementCount;
             const buttonRow = document.createElement('div');
@@ -84,6 +100,14 @@
                 const button = createButton(rowCount, i);
                 buttonRow.appendChild(button);
             }
+
+            const baseDate = new Date(2025, 3, 9); // Apr 9, 2025 (Months are 0-indexed)
+            const currentDate = new Date(baseDate);
+            currentDate.setDate(baseDate.getDate() + rowCount); // Calculate date for this row
+            const dateLabel = document.createElement('div');
+            dateLabel.className = 'date-label';
+            dateLabel.textContent = formatDate(currentDate);
+            buttonRow.appendChild(dateLabel);
 
             document.getElementById('buttonContainer').appendChild(buttonRow);
             saveRowCount(rowCount + 1);
