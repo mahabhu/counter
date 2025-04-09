@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Color Button Rows with Dates</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400&display=swap');
+
         body {
+            font-family: 'Cascadia Mono', monospace;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -14,7 +17,7 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        .buttons {
+        .buttons-row {
             display: flex;
             align-items: center;
             margin-bottom: 5px;
@@ -42,11 +45,10 @@
         }
         .controls {
             display: flex;
+            margin-top: 10px;
         }
-        .date-label {
+        .date-display {
             margin-left: 10px;
-            font-size: 14px;
-            white-space: nowrap;
         }
     </style>
 </head>
@@ -59,8 +61,7 @@
 
     <script>
         const colors = ['#ffffff', '#4285f4', '#0f9d58', '#f4b400', '#db4437'];
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const initialDate = new Date('2025-04-09'); // Initial date
 
         function createButton(row, index) {
             const button = document.createElement('div');
@@ -84,31 +85,27 @@
         }
 
         function formatDate(date) {
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = monthNames[date.getMonth()];
-            const year = String(date.getFullYear()).slice(-2);
-            const dayName = dayNames[date.getDay()];
-            return `${day}-${month}-${year}-${dayName}`;
+            const options = { day: '2-digit', month: 'short', year: '2-digit', weekday: 'short' };
+            return date.toLocaleDateString('en-US', options).replace(/(.{2})(.{4})(.{2})/, '$1-$2-$3');
         }
 
         function addRow() {
             const rowCount = document.getElementById('buttonContainer').childElementCount;
             const buttonRow = document.createElement('div');
-            buttonRow.className = 'buttons';
+            buttonRow.className = 'buttons-row';
 
             for (let i = 0; i < 5; i++) {
                 const button = createButton(rowCount, i);
                 buttonRow.appendChild(button);
             }
 
-            const baseDate = new Date(2025, 3, 9); // Apr 9, 2025 (Months are 0-indexed)
-            const currentDate = new Date(baseDate);
-            currentDate.setDate(baseDate.getDate() + rowCount); // Calculate date for this row
-            const dateLabel = document.createElement('div');
-            dateLabel.className = 'date-label';
-            dateLabel.textContent = formatDate(currentDate);
-            buttonRow.appendChild(dateLabel);
+            const date = new Date(initialDate);
+            date.setDate(initialDate.getDate() + rowCount);
+            const dateDisplay = document.createElement('div');
+            dateDisplay.className = 'date-display';
+            dateDisplay.textContent = formatDate(date);
 
+            buttonRow.appendChild(dateDisplay);
             document.getElementById('buttonContainer').appendChild(buttonRow);
             saveRowCount(rowCount + 1);
         }
