@@ -3,63 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colorful Button Counter</title>
+    <title>Dynamic Color Button Rows</title>
     <style>
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            min-height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
         }
+        .controls {
+            margin-bottom: 10px;
+        }
         .buttons {
             display: flex;
+            margin-bottom: 5px;
         }
-        .button {
+        .button, .control-button {
             width: 1cm;
             height: 1cm;
-            margin: 0;
+            margin: 0 1px;
             border: 1px solid #ccc;
             cursor: pointer;
-            user-select: none;
             display: inline-block;
+        }
+        .control-button {
+            width: auto;
+            padding: 0 10px;
+            background-color: #4285f4;
+            color: white;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="buttons">
-        <div class="button" id="button0"></div>
-        <div class="button" id="button1"></div>
-        <div class="button" id="button2"></div>
-        <div class="button" id="button3"></div>
-        <div class="button" id="button4"></div>
+    <div class="controls">
+        <button class="control-button" id="addRow">Add Row</button>
+        <button class="control-button" id="removeRow">Remove Row</button>
     </div>
+    <div id="buttonContainer"></div>
 
     <script>
         const colors = ['#ffffff', '#4285f4', '#0f9d58', '#f4b400', '#db4437'];
 
-        // Initialize counts from local storage or default to zero
-        const counts = [0, 0, 0, 0, 0].map((_, i) => Number(localStorage.getItem('buttonCount' + i)) || 0);
+        function createButton(row, index) {
+            const button = document.createElement('div');
+            button.className = 'button';
 
-        // Function to update button color and store counts
-        function updateButton(button, index) {
-            button.style.backgroundColor = colors[counts[index]];
-            localStorage.setItem('buttonCount' + index, counts[index]);
-        }
-        
-        // Get all button elements
-        const buttons = document.querySelectorAll('.button');
+            // Initialize count from local storage or default it to zero
+            const buttonKey = `${row}-${index}`;
+            const count = Number(localStorage.getItem(buttonKey)) || 0;
+            updateButtonColor(button, count);
 
-        // Add event listeners to each button
-        buttons.forEach((button, index) => {
-            updateButton(button, index);
-            
             button.addEventListener('click', () => {
-                counts[index] = (counts[index] + 1) % colors.length; // Increment and reset to 0 after reaching last color
-                updateButton(button, index);
+                let newCount = (Number(localStorage.getItem(buttonKey)) + 1) % colors.length;
+                localStorage.setItem(buttonKey, newCount);
+                updateButtonColor(button, newCount);
             });
-        });
+
+            return button;
+        }
+
+        function updateButtonColor(button, count) {
+            button.style.backgroundColor = colors[count];
+        }
+
+        function addRow() {
+            const rowCount = document.getElementById('buttonContainer').childElementCount;
+            const buttonRow = document.createElement('div');
+            buttonRow.className = 'buttons';
+
+            for (let i = 0; i < 5; i++) {
+                const button = createButton(rowCount, i);
+                buttonRow.appendChild(button);
+            }
+
+            document.getElementById('buttonContainer').appendChild(buttonRow);
+        }
+
+        function removeRow() {
+            const container = document.getElementById('buttonContainer');
+            if (container.lastChild) {
+                const rowCount = container.childElementCount - 1;
+                // Clean up local storage for the last row
+                for (let i = 0; i < 5; i++) {
+                    localStorage.removeItem(`${rowCount}-${i}`);
+                }
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        // Initialize functional buttons
+        document.getElementById('addRow').addEventListener('click', addRow);
+        document.getElementById('removeRow').addEventListener('click', removeRow);
+
+        // Optionally adding an initial row on load (remove if not needed)
+        addRow(); // Call this once to start with an initial row
     </script>
 </body>
 </html>
